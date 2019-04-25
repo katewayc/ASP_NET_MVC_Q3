@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static ASP_NET_MVC_Q3.ViewModels.ListViewModel;
 
 namespace ASP_NET_MVC_Q3.Controllers
 {
@@ -86,7 +87,7 @@ namespace ASP_NET_MVC_Q3.Controllers
             return View("List", dataNotDeleted);
         }
 
-            public ActionResult Delete(int? Id)
+        public ActionResult Delete(int? Id)
         {
             var data = source
              .Where(n => n.Id == Id).FirstOrDefault();
@@ -116,7 +117,7 @@ namespace ASP_NET_MVC_Q3.Controllers
         {
             List<Locale> localedata = Locale.Data;
 
-            SelectList selectLists = new SelectList(localedata, "Name", "Name");
+            SelectList selectLists = new SelectList(localedata, "Name", "FullName");
             return selectLists;
         }
 
