@@ -52,9 +52,18 @@ namespace ASP_NET_MVC_Q3.Controllers
 
         public ActionResult Edit(int? Id)
         {
+            EditViewModel editViewModel = new EditViewModel();
+            editViewModel.LocaleList = GetLocaleList();
+
             var data = source
                 .Where(n => n.Id == Id).FirstOrDefault();
-            return View(data);
+
+            editViewModel.Id = data.Id;
+            editViewModel.Name = data.Name;
+            editViewModel.Locale = data.Locale;
+
+
+            return View(editViewModel);
         }
 
         [HttpPost]
