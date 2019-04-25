@@ -63,7 +63,6 @@ namespace ASP_NET_MVC_Q3.Controllers
             editViewModel.Name = data.Name;
             editViewModel.Locale = data.Locale;
 
-
             return View(editViewModel);
         }
 
@@ -116,8 +115,8 @@ namespace ASP_NET_MVC_Q3.Controllers
         public SelectList GetLocaleList()
         {
             List<Locale> localedata = Locale.Data;
-
             SelectList selectLists = new SelectList(localedata, "Name", "FullName");
+            
             return selectLists;
         }
 
@@ -127,6 +126,35 @@ namespace ASP_NET_MVC_Q3.Controllers
                 .OrderByDescending(m => m.Id).FirstOrDefault();
 
             return x.Id + 1;
+        }
+
+        public string GetLocaleFullName(string Locale)
+        {
+            string LocaleFullName = "";
+
+            switch (Locale)
+            {
+                case "US":
+                    LocaleFullName = "United States";
+                    break;
+                case "DE":
+                    LocaleFullName = "Germany";
+                    break;
+                case "CA":
+                    LocaleFullName = "Canada";
+                    break;
+                case "ES":
+                    LocaleFullName = "Spain";
+                    break;
+                case "FR":
+                    LocaleFullName = "France";
+                    break;
+                case "JP":
+                    LocaleFullName = "Japan";
+                    break;
+            }
+
+            return LocaleFullName;
         }
     }
 }
