@@ -32,9 +32,13 @@
                     <td>@item.Locale</td>
                     <td>@item.CreateDate</td>
                     <td>@item.UpdateDate</td>
+                    <td>@Html.ActionLink("Edit", "Edit", new { id = item.Id })|@Html.ActionLink("Delete", "Delete", new { id = item.Id })</td>
                 </tr>
             }
         </tbody>
     </table>
 </body>
+<div>
+    <button type="button" onclick="location.href='@Url.Action("Create", "Product")'">Create</button>
+</div>
 </html>
