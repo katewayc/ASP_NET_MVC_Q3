@@ -6,15 +6,9 @@ using System.Web;
 
 namespace ASP_NET_MVC_Q3.ViewModels
 {
-    public class ListViewModel
-    {
-        public Product product { get; set; }
-        public IEnumerable<ProductView> ProductList { get; set; }
-
-        public class ProductView : Product
+        public class ProductForView : Product
         {
-            public string FormatedCreateTime { get; set; }
-            public string FormatedUpdateTime { get; set; }
+            public string LocaleFullName { get; set; }
         }
-    }
+    
 }

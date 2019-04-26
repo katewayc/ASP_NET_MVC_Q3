@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static ASP_NET_MVC_Q3.ViewModels.ListViewModel;
 
 namespace ASP_NET_MVC_Q3.Controllers
 {
@@ -17,7 +16,10 @@ namespace ASP_NET_MVC_Q3.Controllers
             var data = source
                 .Where(n => n.Deleted != true);
 
-            return View(data);
+            IEnumerable<ProductForView> pForView = GetListViewModel(data);
+
+            return View(pForView);
+
         }
 
         public ActionResult Create()
@@ -44,7 +46,9 @@ namespace ASP_NET_MVC_Q3.Controllers
                 var dataNotDeleted = source
               .Where(n => n.Deleted != true);
 
-                return View("List", dataNotDeleted);
+                IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
+
+                return View("List", pForView);
             }
 
             data.LocaleList = GetLocaleList();
@@ -83,7 +87,9 @@ namespace ASP_NET_MVC_Q3.Controllers
             var dataNotDeleted = source
                 .Where(n => n.Deleted != true);
 
-            return View("List", dataNotDeleted);
+            IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
+
+            return View("List", pForView);
         }
 
         public ActionResult Delete(int? Id)
@@ -109,14 +115,18 @@ namespace ASP_NET_MVC_Q3.Controllers
             var dataNotDeleted = source
                 .Where(n => n.Deleted != true);
 
-            return View("List", dataNotDeleted);
+            IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
+
+            return View("List", pForView);
         }
+
+        #region 自訂方法
 
         public SelectList GetLocaleList()
         {
             List<Locale> localedata = Locale.Data;
             SelectList selectLists = new SelectList(localedata, "Name", "FullName");
-            
+
             return selectLists;
         }
 
@@ -156,5 +166,26 @@ namespace ASP_NET_MVC_Q3.Controllers
 
             return LocaleFullName;
         }
+
+        public IEnumerable<ProductForView> GetListViewModel(IEnumerable<Product> data)
+        {
+            IEnumerable<ProductForView> productForViews = null;
+
+            var x = from b in data
+                    select new ProductForView()
+                    {
+                        Id = b.Id,
+                        Name = b.Name,
+                        LocaleFullName = GetLocaleFullName(b.Locale),
+                        CreateDate = b.CreateDate,
+                        UpdateDate = b.UpdateDate,
+                        Locale = b.Locale
+                    };
+            productForViews = x;
+
+            return productForViews;
+        }
+
+        #endregion
     }
 }
