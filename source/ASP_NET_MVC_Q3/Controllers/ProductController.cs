@@ -59,8 +59,7 @@ namespace ASP_NET_MVC_Q3.Controllers
 
         public ActionResult Delete(int? Id)
         {
-            var data = GlobalVariables.source
-             .Where(n => n.Id == Id).FirstOrDefault();
+            Product data = crud.ReadById(Id);
             return View(data);
         }
 
