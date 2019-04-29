@@ -10,15 +10,13 @@ namespace ASP_NET_MVC_Q3.Controllers
 {
     public class ProductController : Controller
     {
-        List<Product> source = Product.Data;
-        static int Id = 6;
+        List<Product> source = Product.Data; // get static source data
+        static int Id = 6; // use static variable for id generating
 
         public ActionResult List()
         {
-            IEnumerable<ProductForView> pForView = GetListViewModel(source);
-
-            return View(pForView);
-
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source); // mapping Model to ViewModel
+            return View(listViewModel);
         }
 
         public ActionResult Create()
@@ -42,9 +40,8 @@ namespace ASP_NET_MVC_Q3.Controllers
                     CreateDate = DateTime.Now
                 });
 
-                IEnumerable<ProductForView> pForView = GetListViewModel(source);
-
-                return RedirectToAction("List", pForView);
+                IEnumerable<ListViewModel> listViewModel = GetListViewModel(source); // mapping Model to ViewModel
+                return RedirectToAction("List", listViewModel); // "redirect" to List page, not using View() for it will cause refreshing same page issue(F5)
             }
 
             data.LocaleList = GetLocaleList();
@@ -80,8 +77,8 @@ namespace ASP_NET_MVC_Q3.Controllers
                 data.UpdateDate = DateTime.Now;
             }
 
-            IEnumerable<ProductForView> pForView = GetListViewModel(source);
-            return RedirectToAction("List", pForView);
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source);
+            return RedirectToAction("List", listViewModel);
         }
 
         public ActionResult Delete(int? Id)
@@ -96,9 +93,8 @@ namespace ASP_NET_MVC_Q3.Controllers
         {
             var data = source.RemoveAll(n => n.Id == deleteData.Id);
 
-            IEnumerable<ProductForView> pForView = GetListViewModel(source);
-
-            return RedirectToAction("List", pForView);
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source);
+            return RedirectToAction("List", listViewModel);
         }
 
         #region 自訂方法
@@ -140,12 +136,12 @@ namespace ASP_NET_MVC_Q3.Controllers
             return LocaleFullName;
         }
 
-        public IEnumerable<ProductForView> GetListViewModel(IEnumerable<Product> data)
+        public IEnumerable<ListViewModel> GetListViewModel(IEnumerable<Product> data)
         {
-            IEnumerable<ProductForView> productForViews = null;
+            IEnumerable<ListViewModel> listViewModel = null;
 
             var x = from b in data
-                    select new ProductForView()
+                    select new ListViewModel()
                     {
                         Id = b.Id,
                         Name = b.Name,
@@ -154,9 +150,10 @@ namespace ASP_NET_MVC_Q3.Controllers
                         UpdateDate = b.UpdateDate,
                         Locale = b.Locale
                     };
-            productForViews = x;
 
-            return productForViews;
+            listViewModel = x;
+
+            return listViewModel;
         }
 
         #endregion
