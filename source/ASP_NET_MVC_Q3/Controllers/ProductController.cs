@@ -6,16 +6,16 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace ASP_NET_MVC_Q3.Controllers
 {
     public class ProductController : Controller
     {
-        List<Product> source = Product.Data; // get static source data
-        static int Id = 6; // use static variable for id generating
+        CRUD crud = new CRUD();
 
         public ActionResult List()
         {
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source); // mapping Model to ViewModel
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(crud.ReadAll());
             return View(listViewModel);
         }
 
@@ -28,62 +28,38 @@ namespace ASP_NET_MVC_Q3.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel data)
+        public ActionResult Create(CreateViewModel addData)
         {
             if (ModelState.IsValid)
             {
-                source.Add(new Product
-                {
-                    Id = Id++,
-                    Name = data.Name,
-                    Locale = data.Locale,
-                    CreateDate = DateTime.Now
-                });
-
-                IEnumerable<ListViewModel> listViewModel = GetListViewModel(source); // mapping Model to ViewModel
+                crud.Insert(addData);
+                IEnumerable<ListViewModel> listViewModel = GetListViewModel(crud.ReadAll());
                 return RedirectToAction("List", listViewModel); // "redirect" to List page, not using View() for it will cause refreshing same page issue(F5)
             }
 
-            data.LocaleList = GetLocaleList();
-            return View(data);
+            addData.LocaleList = GetLocaleList();
+            return View(addData);
         }
 
         public ActionResult Edit(int? Id)
         {
-            EditViewModel editViewModel = new EditViewModel();
+            Product data = crud.ReadById(Id);
+            EditViewModel editViewModel = GetEditViewModel(data);
             editViewModel.LocaleList = GetLocaleList();
-
-            var data = source
-                .Where(n => n.Id == Id).FirstOrDefault();
-
-            editViewModel.Id = data.Id;
-            editViewModel.Name = data.Name;
-            editViewModel.Locale = data.Locale;
-
             return View(editViewModel);
         }
 
         [HttpPost]
         public ActionResult Edit(Product modifyData)
         {
-            var data = source
-                .Where(n => n.Id == modifyData.Id)
-                .FirstOrDefault();
-
-            if (data != null)
-            {
-                data.Name = modifyData.Name;
-                data.Locale = modifyData.Locale;
-                data.UpdateDate = DateTime.Now;
-            }
-
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source);
+            crud.Update(modifyData);
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(GlobalVariables.source);
             return RedirectToAction("List", listViewModel);
         }
 
         public ActionResult Delete(int? Id)
         {
-            var data = source
+            var data = GlobalVariables.source
              .Where(n => n.Id == Id).FirstOrDefault();
             return View(data);
         }
@@ -91,9 +67,8 @@ namespace ASP_NET_MVC_Q3.Controllers
         [HttpPost]
         public ActionResult Delete(Product deleteData)
         {
-            var data = source.RemoveAll(n => n.Id == deleteData.Id);
-
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(source);
+            crud.Delete(deleteData);
+            IEnumerable<ListViewModel> listViewModel = GetListViewModel(GlobalVariables.source);
             return RedirectToAction("List", listViewModel);
         }
 
@@ -156,6 +131,16 @@ namespace ASP_NET_MVC_Q3.Controllers
             return listViewModel;
         }
 
+        public EditViewModel GetEditViewModel(Product data)
+        {
+            EditViewModel editViewModel = new EditViewModel();
+
+            editViewModel.Id = data.Id;
+            editViewModel.Name = data.Name;
+            editViewModel.Locale = data.Locale;
+
+            return editViewModel;
+        }
         #endregion
     }
 }
