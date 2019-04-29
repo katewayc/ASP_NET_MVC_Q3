@@ -11,12 +11,11 @@ namespace ASP_NET_MVC_Q3.Controllers
     public class ProductController : Controller
     {
         List<Product> source = Product.Data;
+        static int Id = 6;
+
         public ActionResult List()
         {
-            var data = source
-                .Where(n => n.Deleted != true);
-
-            IEnumerable<ProductForView> pForView = GetListViewModel(data);
+            IEnumerable<ProductForView> pForView = GetListViewModel(source);
 
             return View(pForView);
 
@@ -37,18 +36,15 @@ namespace ASP_NET_MVC_Q3.Controllers
             {
                 source.Add(new Product
                 {
-                    Id = GetNewId(),
+                    Id = Id++,
                     Name = data.Name,
                     Locale = data.Locale,
                     CreateDate = DateTime.Now
                 });
 
-                var dataNotDeleted = source
-              .Where(n => n.Deleted != true);
+                IEnumerable<ProductForView> pForView = GetListViewModel(source);
 
-                IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
-
-                return View("List", pForView);
+                return RedirectToAction("List", pForView);
             }
 
             data.LocaleList = GetLocaleList();
@@ -84,12 +80,8 @@ namespace ASP_NET_MVC_Q3.Controllers
                 data.UpdateDate = DateTime.Now;
             }
 
-            var dataNotDeleted = source
-                .Where(n => n.Deleted != true);
-
-            IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
-
-            return View("List", pForView);
+            IEnumerable<ProductForView> pForView = GetListViewModel(source);
+            return RedirectToAction("List", pForView);
         }
 
         public ActionResult Delete(int? Id)
@@ -102,22 +94,11 @@ namespace ASP_NET_MVC_Q3.Controllers
         [HttpPost]
         public ActionResult Delete(Product deleteData)
         {
-            var data = source
-            .Where(n => n.Id == deleteData.Id).FirstOrDefault();
+            var data = source.RemoveAll(n => n.Id == deleteData.Id);
 
-            if (data != null)
-            {
-                data.Deleted = true;
-                data.UpdateDate = DateTime.Now;
-            }
+            IEnumerable<ProductForView> pForView = GetListViewModel(source);
 
-
-            var dataNotDeleted = source
-                .Where(n => n.Deleted != true);
-
-            IEnumerable<ProductForView> pForView = GetListViewModel(dataNotDeleted);
-
-            return View("List", pForView);
+            return RedirectToAction("List", pForView);
         }
 
         #region 自訂方法
@@ -128,14 +109,6 @@ namespace ASP_NET_MVC_Q3.Controllers
             SelectList selectLists = new SelectList(localedata, "Name", "FullName");
 
             return selectLists;
-        }
-
-        public int GetNewId()
-        {
-            var x = source
-                .OrderByDescending(m => m.Id).FirstOrDefault();
-
-            return x.Id + 1;
         }
 
         public string GetLocaleFullName(string Locale)

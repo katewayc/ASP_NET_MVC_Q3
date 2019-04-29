@@ -13,7 +13,6 @@ namespace ASP_NET_MVC_Q3.Data
         public string Locale { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
-        public bool Deleted { get; set; }
 
         public static List<Product> Data = new List<Product>
         {
