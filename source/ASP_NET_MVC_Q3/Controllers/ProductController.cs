@@ -12,134 +12,62 @@ namespace ASP_NET_MVC_Q3.Controllers
     public class ProductController : Controller
     {
         CRUD crud = new CRUD();
+        ListViewModel vmList = new ListViewModel();
 
         public ActionResult List()
         {
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(crud.ReadAll());
-            return View(listViewModel);
+            IEnumerable<ListViewModel> model = vmList.Mapping(crud.ReadAll());
+            return View(model);
         }
 
         public ActionResult Create()
         {
-            CreateViewModel createViewModel = new CreateViewModel();
-            createViewModel.LocaleList = GetLocaleList();
-            return View(createViewModel);
+            CreateViewModel model = new CreateViewModel();
+            model.LocaleList = DataSource.GetLocaleSelectList();
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(CreateViewModel addData)
+        public ActionResult Create(CreateViewModel product)
         {
             if (ModelState.IsValid)
             {
-                crud.Insert(addData);
-                IEnumerable<ListViewModel> listViewModel = GetListViewModel(crud.ReadAll());
-                return RedirectToAction("List", listViewModel); // "redirect" to List page, not using View() for it will cause refreshing same page issue(F5)
+                IEnumerable<ListViewModel> model = vmList.Mapping(crud.Insert(product));
+                return RedirectToAction("List", model);
             }
 
-            addData.LocaleList = GetLocaleList();
-            return View(addData);
+            product.LocaleList = DataSource.GetLocaleSelectList();
+            return View(product);
         }
 
         public ActionResult Edit(int? Id)
         {
-            Product data = crud.ReadById(Id);
-            EditViewModel editViewModel = GetEditViewModel(data);
-            editViewModel.LocaleList = GetLocaleList();
-            return View(editViewModel);
+            EditViewModel model = new EditViewModel();
+            model = model.Mapping(crud.ReadBy(Id));
+            model.LocaleList = DataSource.GetLocaleSelectList();
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult Edit(Product modifyData)
+        public ActionResult Edit(Product product)
         {
-            crud.Update(modifyData);
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(GlobalVariables.source);
-            return RedirectToAction("List", listViewModel);
+            IEnumerable<ListViewModel> model = vmList.Mapping(crud.Update(product));
+            return RedirectToAction("List", model);
         }
 
         public ActionResult Delete(int? Id)
         {
-            Product data = crud.ReadById(Id);
+            Product data = crud.ReadBy(Id);
             return View(data);
         }
 
         [HttpPost]
-        public ActionResult Delete(Product deleteData)
+        public ActionResult Delete(Product product)
         {
-            crud.Delete(deleteData);
-            IEnumerable<ListViewModel> listViewModel = GetListViewModel(GlobalVariables.source);
-            return RedirectToAction("List", listViewModel);
+            IEnumerable<ListViewModel> model = vmList.Mapping(crud.Delete(product));
+            return RedirectToAction("List", model);
         }
 
-        #region 自訂方法
-
-        public SelectList GetLocaleList()
-        {
-            List<Locale> localedata = Locale.Data;
-            SelectList selectLists = new SelectList(localedata, "Name", "FullName");
-
-            return selectLists;
-        }
-
-        public string GetLocaleFullName(string Locale)
-        {
-            string LocaleFullName = "";
-
-            switch (Locale)
-            {
-                case "US":
-                    LocaleFullName = "United States";
-                    break;
-                case "DE":
-                    LocaleFullName = "Germany";
-                    break;
-                case "CA":
-                    LocaleFullName = "Canada";
-                    break;
-                case "ES":
-                    LocaleFullName = "Spain";
-                    break;
-                case "FR":
-                    LocaleFullName = "France";
-                    break;
-                case "JP":
-                    LocaleFullName = "Japan";
-                    break;
-            }
-
-            return LocaleFullName;
-        }
-
-        public IEnumerable<ListViewModel> GetListViewModel(IEnumerable<Product> data)
-        {
-            IEnumerable<ListViewModel> listViewModel = null;
-
-            var x = from b in data
-                    select new ListViewModel()
-                    {
-                        Id = b.Id,
-                        Name = b.Name,
-                        LocaleFullName = GetLocaleFullName(b.Locale),
-                        CreateDate = b.CreateDate,
-                        UpdateDate = b.UpdateDate,
-                        Locale = b.Locale
-                    };
-
-            listViewModel = x;
-
-            return listViewModel;
-        }
-
-        public EditViewModel GetEditViewModel(Product data)
-        {
-            EditViewModel editViewModel = new EditViewModel();
-
-            editViewModel.Id = data.Id;
-            editViewModel.Name = data.Name;
-            editViewModel.Locale = data.Locale;
-
-            return editViewModel;
-        }
-        #endregion
     }
 }

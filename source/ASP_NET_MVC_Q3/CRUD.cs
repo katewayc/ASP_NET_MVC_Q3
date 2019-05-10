@@ -11,45 +11,50 @@ namespace ASP_NET_MVC_Q3
     {
         public IEnumerable<Product> ReadAll()
         {
-            return GlobalVariables.source;
+            return DataSource.ProductList;
         }
 
-        public Product ReadById(int? Id)
+        public Product ReadBy(int? Id)
         {
-            var product = GlobalVariables.source
+            var product = DataSource.ProductList
                   .Where(n => n.Id == Id).FirstOrDefault();
 
             return product;
         }
 
-        public void Insert(Product addData)
+        public IEnumerable<Product> Insert(Product data)
         {
-            GlobalVariables.source.Add(new Product
+            DataSource.ProductList.Add(new Product
             {
-                Id = GlobalVariables.Id++,
-                Name = addData.Name,
-                Locale = addData.Locale,
+                Id = DataSource.GetNewId(),
+                Name = data.Name,
+                Locale = data.Locale,
                 CreateDate = DateTime.Now
             });
+
+            return DataSource.ProductList;
         }
 
-        public void Update(Product modifyData)
+        public IEnumerable<Product> Update(Product data)
         {
-            var data = GlobalVariables.source
-               .Where(n => n.Id == modifyData.Id)
+            var product = DataSource.ProductList
+               .Where(n => n.Id == data.Id)
                .FirstOrDefault();
 
-            if (data != null)
+            if (product != null)
             {
-                data.Name = modifyData.Name;
-                data.Locale = modifyData.Locale;
-                data.UpdateDate = DateTime.Now;
+                product.Name = data.Name;
+                product.Locale = data.Locale;
+                product.UpdateDate = DateTime.Now;
             }
+            return DataSource.ProductList;
         }
 
-        public void Delete(Product deleteData)
+        public IEnumerable<Product> Delete(Product data)
         {
-            var data = GlobalVariables.source.RemoveAll(n => n.Id == deleteData.Id);
+            DataSource.ProductList.RemoveAll(p => p.Id == data.Id);
+
+            return DataSource.ProductList;
         }
     }
 }

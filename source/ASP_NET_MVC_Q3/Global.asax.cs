@@ -14,6 +14,7 @@ namespace ASP_NET_MVC_Q3
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            DataSource.ReadLastInsertedId();
         }
     }
 }
