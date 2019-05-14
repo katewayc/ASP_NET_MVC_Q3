@@ -1,20 +1,22 @@
-﻿using ASP_NET_MVC_Q3.Data;
-using ASP_NET_MVC_Q3.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ASP_NET_MVC_Q3.Data;
 
-namespace ASP_NET_MVC_Q3
+namespace ASP_NET_MVC_Q3.Infrastructure
 {
-    public class CRUD
+    public class ProductRepository : IRepository<Product>
     {
-        public IEnumerable<Product> ReadAll()
+        public IEnumerable<Product> List
         {
-            return DataSource.ProductList;
+            get
+            {
+                return DataSource.ProductList;
+            }
         }
 
-        public Product ReadBy(int? Id)
+        public Product ReadById(int? Id)
         {
             var product = DataSource.ProductList
                   .Where(n => n.Id == Id).FirstOrDefault();

@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<ASP_NET_MVC_Q3.ViewModels.ListViewModel>
 
 @{
-    Layout = null;
+    // Layout = null;
+    ViewBag.Title = "List";
 }
 
 <!DOCTYPE html>
@@ -13,7 +14,7 @@
 </head>
 <body>
     <h2>List</h2>
-    <table>
+    <table class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Id</th>
@@ -21,6 +22,7 @@
                 <th>Locale</th>
                 <th>CreateDate</th>
                 <th>UpdateDate</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -38,6 +40,7 @@
         </tbody>
     </table>
 </body>
+<br />
 <div>
     <button type="button" onclick="location.href='@Url.Action("Create", "Product")'">Create</button>
 </div>
