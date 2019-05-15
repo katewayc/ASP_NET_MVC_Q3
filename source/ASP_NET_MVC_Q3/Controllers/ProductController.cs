@@ -9,10 +9,15 @@ using System.Web.Mvc;
 
 
 namespace ASP_NET_MVC_Q3.Controllers
-{
+{ 
     public class ProductController : Controller
     {
-        ProductRepository productRepository = new ProductRepository();
+        private IProductRepository<Product> productRepository;
+        public ProductController()
+        {
+            this.productRepository = new ProductRepository();
+        }
+
         ListViewModel vmList = new ListViewModel();
 
         public ActionResult List()
