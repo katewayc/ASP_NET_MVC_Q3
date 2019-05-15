@@ -7,12 +7,12 @@ using ASP_NET_MVC_Q3.Data;
 
 namespace ASP_NET_MVC_Q3.Infrastructure
 {
-    public interface IRepository<T> where T : Product
+    public interface IProductRepository<T> where T : Product
     {
-        IEnumerable<T> Delete(T entity);
-        IEnumerable<T> Insert(T entity);
         IEnumerable<T> List { get; }
         T ReadById(int? Id);
-        IEnumerable<T> Update(T entity);
+        void Update(T entity);
+        void Insert(T entity);
+        void Delete(T entity);
     }
 }

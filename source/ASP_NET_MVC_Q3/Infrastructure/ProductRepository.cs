@@ -6,7 +6,7 @@ using ASP_NET_MVC_Q3.Data;
 
 namespace ASP_NET_MVC_Q3.Infrastructure
 {
-    public class ProductRepository : IRepository<Product>
+    public class ProductRepository : IProductRepository<Product>
     {
         public IEnumerable<Product> List
         {
@@ -24,7 +24,7 @@ namespace ASP_NET_MVC_Q3.Infrastructure
             return product;
         }
 
-        public IEnumerable<Product> Insert(Product data)
+        public void Insert(Product data)
         {
             DataSource.ProductList.Add(new Product
             {
@@ -33,11 +33,9 @@ namespace ASP_NET_MVC_Q3.Infrastructure
                 Locale = data.Locale,
                 CreateDate = DateTime.Now
             });
-
-            return DataSource.ProductList;
         }
 
-        public IEnumerable<Product> Update(Product data)
+        public void Update(Product data)
         {
             var product = DataSource.ProductList
                .Where(n => n.Id == data.Id)
@@ -49,14 +47,11 @@ namespace ASP_NET_MVC_Q3.Infrastructure
                 product.Locale = data.Locale;
                 product.UpdateDate = DateTime.Now;
             }
-            return DataSource.ProductList;
         }
 
-        public IEnumerable<Product> Delete(Product data)
+        public void Delete(Product data)
         {
             DataSource.ProductList.RemoveAll(p => p.Id == data.Id);
-
-            return DataSource.ProductList;
         }
     }
 }

@@ -12,12 +12,12 @@ namespace ASP_NET_MVC_Q3.Controllers
 {
     public class ProductController : Controller
     {
-        ProductRepository crud = new ProductRepository();
+        ProductRepository productRepository = new ProductRepository();
         ListViewModel vmList = new ListViewModel();
 
         public ActionResult List()
         {
-            IEnumerable<ListViewModel> model = vmList.Mapping(crud.List);
+            IEnumerable<ListViewModel> model = vmList.Mapping(productRepository.List);
             return View(model);
         }
 
@@ -34,8 +34,9 @@ namespace ASP_NET_MVC_Q3.Controllers
         {
             if (ModelState.IsValid)
             {
-                IEnumerable<ListViewModel> model = vmList.Mapping(crud.Insert(product));
-                return RedirectToAction("List", model);
+                productRepository.Insert(product);
+                IEnumerable<ListViewModel> model = vmList.Mapping(productRepository.List);
+                return RedirectToAction("List");
             }
 
             product.LocaleList = DataSource.GetLocaleSelectList();
@@ -45,7 +46,7 @@ namespace ASP_NET_MVC_Q3.Controllers
         public ActionResult Edit(int? Id)
         {
             EditViewModel model = new EditViewModel();
-            model = model.Mapping(crud.ReadById(Id));
+            model = model.Mapping(productRepository.ReadById(Id));
             model.LocaleList = DataSource.GetLocaleSelectList();
             return View(model);
         }
@@ -53,21 +54,23 @@ namespace ASP_NET_MVC_Q3.Controllers
         [HttpPost]
         public ActionResult Edit(Product product)
         {
-            IEnumerable<ListViewModel> model = vmList.Mapping(crud.Update(product));
-            return RedirectToAction("List", model);
+            productRepository.Update(product);
+            IEnumerable<ListViewModel> model = vmList.Mapping(productRepository.List);
+            return RedirectToAction("List");
         }
 
         public ActionResult Delete(int? Id)
         {
-            Product data = crud.ReadById(Id);
+            Product data = productRepository.ReadById(Id);
             return View(data);
         }
 
         [HttpPost]
         public ActionResult Delete(Product product)
         {
-            IEnumerable<ListViewModel> model = vmList.Mapping(crud.Delete(product));
-            return RedirectToAction("List", model);
+            productRepository.Delete(product);
+            IEnumerable<ListViewModel> model = vmList.Mapping(productRepository.List);
+            return RedirectToAction("List");
         }
 
     }
